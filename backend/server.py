@@ -103,6 +103,11 @@ class Problem(BaseModel):
     problem_description: str
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    picture: Optional[str] = None
+    email_notifications: Optional[bool] = None
+
 # ==================== Helper Functions ====================
 
 def hash_password(password: str) -> str:
