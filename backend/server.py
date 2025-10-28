@@ -346,6 +346,28 @@ async def logout(request: Request):
     response.delete_cookie(key="session_token", path="/")
     return response
 
+@api_router.put("/auth/profile")
+async def update_profile(profile_data: UserUpdate, user: dict = Depends(get_current_user)):
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    update_fields = {}
+    if profile_data.name is not None:
+        update_fields['name'] = profile_data.name
+    if profile_data.picture is not None:
+        update_fields['picture'] = profile_data.picture
+    if profile_data.email_notifications is not None:
+        update_fields['email_notifications'] = profile_data.email_notifications
+    
+    if update_fields:
+        await db.users.update_one(
+            {"id": user['id']},
+            {"$set": update_fields}
+        )
+    
+    updated_user = await db.users.find_one({"id": user['id']}, {"_id": 0, "password": 0})
+    return {"success": True, "user": updated_user}
+
 # ==================== Bluetooth Device Routes ====================
 
 @api_router.post("/devices")
