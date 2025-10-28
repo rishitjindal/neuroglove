@@ -143,6 +143,8 @@ def send_email(subject: str, body: str) -> bool:
         gmail_address = os.environ.get('GMAIL_ADDRESS')
         gmail_password = os.environ.get('GMAIL_APP_PASSWORD')
         recipient = os.environ.get('RECIPIENT_EMAIL')
+        smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.environ.get('SMTP_PORT', 587))
         
         if not gmail_address or not gmail_password:
             logger.error("Gmail credentials not configured")
@@ -155,13 +157,22 @@ def send_email(subject: str, body: str) -> bool:
         
         msg.attach(MIMEText(body, "plain"))
         
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        logger.info(f"Attempting to send email to {recipient} via {smtp_server}:{smtp_port}")
+        
+        with smtplib.SMTP(smtp_server, smtp_port, timeout=30) as server:
+            server.set_debuglevel(1)  # Enable debug output
             server.starttls()
             server.login(gmail_address, gmail_password)
             server.sendmail(gmail_address, [recipient], msg.as_string())
         
         logger.info(f"Email sent successfully to {recipient}")
         return True
+    except smtplib.SMTPAuthenticationError as e:
+        logger.error(f"SMTP Authentication failed: {str(e)}")
+        return False
+    except smtplib.SMTPException as e:
+        logger.error(f"SMTP error: {str(e)}")
+        return False
     except Exception as e:
         logger.error(f"Failed to send email: {str(e)}")
         return False
