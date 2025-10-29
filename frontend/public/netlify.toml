@@ -4,3 +4,12 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build]
+  functions = "netlify/functions"
+  publish = "frontend/build"  # if you also have frontend build here
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/app/:splat"
+  status = 200
