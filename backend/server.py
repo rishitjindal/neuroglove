@@ -14,7 +14,6 @@ from passlib.context import CryptContext
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from emergentintegrations.llm.chat import LlmChat, UserMessage
 import requests
 
 ROOT_DIR = Path(__file__).parent
