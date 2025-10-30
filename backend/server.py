@@ -538,3 +538,21 @@ app = FastAPI()
 def root():
     return {"message": "Neuroglove backend is live!"}
 
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class InputData(BaseModel):
+    data: list
+
+@app.get("/")
+def root():
+    return {"message": "Backend working"}
+
+@app.post("/predict")
+def predict(input_data: InputData):
+    # your model logic here
+    return {"prediction": "something"}
+
+
