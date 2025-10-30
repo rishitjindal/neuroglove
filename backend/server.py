@@ -555,4 +555,17 @@ def predict(input_data: InputData):
     # your model logic here
     return {"prediction": "something"}
 
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class InputData(BaseModel):
+    # your input fields
+    pass
+
+@app.post("/predict")
+async def predict(data: InputData):
+    # model prediction logic
+    return {"prediction": "something"}
 
